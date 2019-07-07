@@ -1,5 +1,5 @@
 require("dotenv").config();
-var Spotify = require('node-spotify-api');
+//var Spotify = require('node-spotify-api');
 //var spotify = new Spotify(keys.spotify);
 
 
@@ -90,11 +90,73 @@ function getMovieInfo(movieName) {
             ].join("\n\n");
             console.log(concertData);
             
-
+            
         })
         
     }
     
-   
+    function getSongInfo(arg2) {
+        var divider = "\n------------------------------------------------------------";
+        var Spotify = require("node-spotify-api");
+        var track = arg2;
+        var spotify = new Spotify({
+          id: "8866202a6eb14d1eb27ea164a7f9f481",
+          secret: "cb3e89d8ff274f6c93153316d08d1fc5"
+        });
 
-    startProg(arg1, arg2);
+    spotify
+    .search({ type: "track", query: track, limit: 1 })
+    .then(function(response) {
+
+        console.log(response);
+        var response = response.tracks.items[0];
+        var musicData = [
+            divider,
+            "Album Name: " + response.album.name,
+        "Song Name: " + response.name,
+        "Artist Name: " + response.artists[0].name,
+        "Preview Link: " + response.external_urls.spotify,
+        divider
+      ].join("\n\n");
+      console.log(musicData);
+    })
+    .catch(function(error) {
+      console.log(error);
+      getSongInfo("The Sign Ace of Base")
+    });
+ }
+
+ var fs = require('fs');
+
+function getWhat() {
+
+ fs.readFile("random.txt", "utf8", function(error, data) {
+
+    if (error) {
+        return console.log(error);
+    }
+    console.log(data);
+
+    var dataArr = data.split(","); 
+
+    console.log(dataArr);
+
+    var action = dataArr[0];
+    var query = dataArr[1];
+
+    switch(action) {
+        case "concert-this": getMyBands(query);
+        break;
+        case "movie-this": getMovieInfo(query);
+        break;
+        case "spotify-this-song": getSongInfo(query);
+        break;
+    }
+
+
+ });
+
+}
+
+startProg(arg1, arg2);
+    
